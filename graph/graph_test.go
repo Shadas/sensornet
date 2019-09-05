@@ -56,7 +56,7 @@ func TestGraphValidate(t *testing.T) {
 func testGraphValidateWithValidCases(t *testing.T) {
 	for idx, vn := range ValidNodes {
 		g := GenerateGraph(vn)
-		if !g.validateGraph() {
+		if !g.validateGraphWithLeadNode() {
 			t.Errorf("%d node validate should be true", idx)
 			break
 		}
@@ -66,7 +66,7 @@ func testGraphValidateWithValidCases(t *testing.T) {
 func testGraphValidateWithInvalidCases(t *testing.T) {
 	for idx, in := range InvalidNodes {
 		g := GenerateGraph(in)
-		if g.validateGraph() {
+		if g.validateGraphWithLeadNode() {
 			t.Errorf("%d node validate should be wrong", idx)
 		}
 	}
