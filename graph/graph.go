@@ -7,10 +7,13 @@ import (
 
 // 一个被处理的网络被视为一个可连结的图
 type Graph struct {
+	NodeCount int
 	// 这个图所包含的所有结点
 	nodes []*Node
 	// 这个图的邻接矩阵
 	matrix [][]int
+	// 原始管道
+	oriRoutes []*Route
 	// 从某个node开始引出的结点
 	leadNode *Node
 	// validate用的map
@@ -44,8 +47,10 @@ func GenerateGraphWithNodesAndRoutes(nodes []*Node, routes []*Route) (g *Graph, 
 		matrix[x][y], matrix[y][x] = 1, 1
 	}
 	g = &Graph{
-		nodes:  nodes,
-		matrix: matrix,
+		nodes:     nodes,
+		matrix:    matrix,
+		NodeCount: len(nodes),
+		oriRoutes: routes,
 	}
 	return
 }
@@ -55,6 +60,28 @@ func GenerateGraph(root *Node) *Graph {
 		leadNode: root,
 	}
 	return g
+}
+
+// 打印该图的邻接矩阵
+func (g *Graph) ShowMatrix() {
+	for _, line := range g.matrix {
+		fmt.Println(line)
+	}
+}
+
+// 获取该图的邻接矩阵
+func (g *Graph) Matrix() [][]int {
+	return g.matrix
+}
+
+// 获取该图的节点列表
+func (g *Graph) Nodes() []*Node {
+	return g.nodes
+}
+
+// 获取该图的原版管道信息
+func (g *Graph) OriRoute() []*Route {
+	return g.oriRoutes
 }
 
 // 通过起始结点验证一个node为起始结点的graph是否为合法的网络

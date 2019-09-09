@@ -1,55 +1,54 @@
 package sensor
 
 import (
-	"fmt"
-
 	"github.com/sensornet/graph"
 )
 
 /*
 示意图：
-           5
+           4
            |
- 1 -- 2 -- 3 -- 4
+ 0 -- 1 -- 2 -- 3
  |    |    |
- 6 -- 7 -- 8
+ 5 -- 6 -- 7
  |    |    |
- 9 -- 10 - 11
+ 8 -- 9 -- 10
 
 */
 func ExampleGraph() {
+	n0 := &graph.Node{Num: 0}
+	n1 := &graph.Node{Num: 1}
+	n2 := &graph.Node{Num: 2}
+	n3 := &graph.Node{Num: 3}
+	n4 := &graph.Node{Num: 4}
+	n5 := &graph.Node{Num: 5}
+	n6 := &graph.Node{Num: 6}
+	n7 := &graph.Node{Num: 7}
+	n8 := &graph.Node{Num: 8}
+	n9 := &graph.Node{Num: 9}
+	n10 := &graph.Node{Num: 10}
 	nodes := []*graph.Node{
-		&graph.Node{Num: 1},
-		&graph.Node{Num: 2},
-		&graph.Node{Num: 3},
-		&graph.Node{Num: 4},
-		&graph.Node{Num: 5},
-		&graph.Node{Num: 6},
-		&graph.Node{Num: 7},
-		&graph.Node{Num: 8},
-		&graph.Node{Num: 9},
-		&graph.Node{Num: 10},
-		&graph.Node{Num: 11},
+		n0, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10,
 	}
 	routes := []*graph.Route{
-		&graph.Route{1, 2},
-		&graph.Route{2, 3},
-		&graph.Route{3, 5},
-		&graph.Route{3, 4},
-		&graph.Route{1, 6},
-		&graph.Route{2, 7},
-		&graph.Route{3, 8},
-		&graph.Route{6, 7},
-		&graph.Route{7, 8},
-		&graph.Route{6, 9},
-		&graph.Route{7, 10},
-		&graph.Route{8, 11},
-		&graph.Route{9, 10},
-		&graph.Route{10, 11},
+		graph.NewRoute(n0, n1),
+		graph.NewRoute(n1, n2),
+		graph.NewRoute(n2, n4),
+		graph.NewRoute(n2, n3),
+		graph.NewRoute(n0, n5),
+		graph.NewRoute(n1, n6),
+		graph.NewRoute(n2, n7),
+		graph.NewRoute(n5, n6),
+		graph.NewRoute(n6, n7),
+		graph.NewRoute(n5, n8),
+		graph.NewRoute(n6, n9),
+		graph.NewRoute(n7, n10),
+		graph.NewRoute(n8, n9),
+		graph.NewRoute(n9, n10),
 	}
 	egGraph, err := graph.GenerateGraphWithNodesAndRoutes(nodes, routes)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(egGraph)
+	InstallSensor1(egGraph)
 }
