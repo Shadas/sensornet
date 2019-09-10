@@ -7,8 +7,9 @@ import (
 type SensorType int
 
 const (
-	SensorTypeNone   SensorType = 0
-	SensorTypeEntity SensorType = 1
+	SensorTypeInvalid SensorType = -1
+	SensorTypeNone    SensorType = 0
+	SensorTypeEntity  SensorType = 1
 )
 
 // 路径，用于连结各个结点
@@ -34,6 +35,18 @@ func (r *Route) InstallSensor(pos string, st SensorType) {
 	}
 	if pos == "B" {
 		r.posB = st
+	}
+}
+
+//返回对应位置的传感器
+func (r *Route) SensorWithPos(pos string) SensorType {
+	switch pos {
+	case "A":
+		return r.posA
+	case "B":
+		return r.posB
+	default:
+		return SensorTypeInvalid
 	}
 }
 

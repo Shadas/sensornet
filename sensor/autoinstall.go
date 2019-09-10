@@ -13,6 +13,10 @@ func InstallSensor1(g *graph.Graph) {
 		endPointsList = []*graph.Node{}
 		// 连通节点
 		connectedPointsList = []*graph.Node{}
+		// 普通3路节点
+		normal3PointsList = []*graph.Node{}
+		// 普通4路节点
+		normal4PointsList = []*graph.Node{}
 		// 末端管道
 		endRoutes = []*graph.Route{}
 		// 连通管道
@@ -37,6 +41,12 @@ func InstallSensor1(g *graph.Graph) {
 		}
 		if lineCount == 2 && columnCount == 2 {
 			connectedPointsList = append(connectedPointsList, g.Nodes()[i])
+		}
+		if lineCount == 3 && columnCount == 3 {
+			normal3PointsList = append(normal3PointsList, g.Nodes()[i])
+		}
+		if lineCount == 4 && columnCount == 4 {
+			normal4PointsList = append(normal4PointsList, g.Nodes()[i])
 		}
 	}
 routeloop:
@@ -83,9 +93,63 @@ routeloop:
 			r.InstallSensor("A", graph.SensorTypeEntity)
 		}
 	}
-	// 处理普通管道
-	for _, r := range normalRoutes {
-		r.InstallSensor("A", graph.SensorTypeEntity)
+	// 遍历所有3路普通节点
+	for _, p := range normal3PointsList {
+		var (
+			already int
+			routes  []*graph.Route
+		)
+		for _, r := range g.OriRoute() {
+			switch r.SensorWithPos(r.EndpointPos(p)) {
+			case graph.SensorTypeEntity:
+				already++
+			case graph.SensorTypeNone:
+				routes = append(routes, r)
+			case graph.SensorTypeInvalid:
+				continue
+			}
+		}
+		for already < 2 && len(routes) > 0 {
+			r := routes[0]
+			pos := r.EndpointPos(p)
+			if pos == "A" {
+				r.InstallSensor("A", graph.SensorTypeEntity)
+			}
+			if pos == "B" {
+				r.InstallSensor("B", graph.SensorTypeEntity)
+			}
+			routes = routes[1:]
+			already++
+		}
+	}
+	// 遍历所有4路普通节点
+	for _, p := range normal4PointsList {
+		var (
+			already int
+			routes  []*graph.Route
+		)
+		for _, r := range g.OriRoute() {
+			switch r.SensorWithPos(r.EndpointPos(p)) {
+			case graph.SensorTypeEntity:
+				already++
+			case graph.SensorTypeNone:
+				routes = append(routes, r)
+			case graph.SensorTypeInvalid:
+				continue
+			}
+		}
+		for already < 3 && len(routes) > 0 {
+			r := routes[0]
+			pos := r.EndpointPos(p)
+			if pos == "A" {
+				r.InstallSensor("A", graph.SensorTypeEntity)
+			}
+			if pos == "B" {
+				r.InstallSensor("B", graph.SensorTypeEntity)
+			}
+			routes = routes[1:]
+			already++
+		}
 	}
 	fmt.Println("末端节点：")
 	for _, p := range endPointsList {
@@ -93,6 +157,14 @@ routeloop:
 	}
 	fmt.Println("连通节点：")
 	for _, p := range connectedPointsList {
+		fmt.Println(p.Num)
+	}
+	fmt.Println("普通3路节点：")
+	for _, p := range normal3PointsList {
+		fmt.Println(p.Num)
+	}
+	fmt.Println("普通4路节点：")
+	for _, p := range normal4PointsList {
 		fmt.Println(p.Num)
 	}
 	fmt.Println("末端管道：")
