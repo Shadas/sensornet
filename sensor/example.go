@@ -16,37 +16,23 @@ import (
 
 */
 func ExampleGraph1() {
-	n0 := &graph.Node{Num: 0}
-	n1 := &graph.Node{Num: 1}
-	n2 := &graph.Node{Num: 2}
-	n3 := &graph.Node{Num: 3}
-	n4 := &graph.Node{Num: 4}
-	n5 := &graph.Node{Num: 5}
-	n6 := &graph.Node{Num: 6}
-	n7 := &graph.Node{Num: 7}
-	n8 := &graph.Node{Num: 8}
-	n9 := &graph.Node{Num: 9}
-	n10 := &graph.Node{Num: 10}
-	nodes := []*graph.Node{
-		n0, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10,
+	input := []string{
+		"0,1",
+		"1,2",
+		"2,3",
+		"2,4",
+		"0,5",
+		"1,6",
+		"2,7",
+		"5,6",
+		"6,7",
+		"5,8",
+		"6,9",
+		"7,10",
+		"8,9",
+		"9,10",
 	}
-	routes := []*graph.Route{
-		graph.NewRoute(n0, n1),
-		graph.NewRoute(n1, n2),
-		graph.NewRoute(n2, n4),
-		graph.NewRoute(n2, n3),
-		graph.NewRoute(n0, n5),
-		graph.NewRoute(n1, n6),
-		graph.NewRoute(n2, n7),
-		graph.NewRoute(n5, n6),
-		graph.NewRoute(n6, n7),
-		graph.NewRoute(n5, n8),
-		graph.NewRoute(n6, n9),
-		graph.NewRoute(n7, n10),
-		graph.NewRoute(n8, n9),
-		graph.NewRoute(n9, n10),
-	}
-	egGraph, err := graph.GenerateGraphWithNodesAndRoutes(nodes, routes)
+	egGraph, err := graph.GenerateGraphWithRoutes(input)
 	if err != nil {
 		panic(err)
 	}
@@ -61,34 +47,21 @@ func ExampleGraph1() {
      8 -- -- 9
 */
 func ExampleGraph2() {
-	n0 := &graph.Node{Num: 0}
-	n1 := &graph.Node{Num: 1}
-	n2 := &graph.Node{Num: 2}
-	n3 := &graph.Node{Num: 3}
-	n4 := &graph.Node{Num: 4}
-	n5 := &graph.Node{Num: 5}
-	n6 := &graph.Node{Num: 6}
-	n7 := &graph.Node{Num: 7}
-	n8 := &graph.Node{Num: 8}
-	n9 := &graph.Node{Num: 9}
-	nodes := []*graph.Node{
-		n0, n1, n2, n3, n4, n5, n6, n7, n8, n9,
+	input := []string{
+		"0,1",
+		"1,2",
+		"2,3",
+		"3,4",
+		"1,5",
+		"3,6",
+		"4,7",
+		"5,6",
+		"6,7",
+		"5,8",
+		"6,9",
+		"8,9",
 	}
-	routes := []*graph.Route{
-		graph.NewRoute(n0, n1),
-		graph.NewRoute(n1, n2),
-		graph.NewRoute(n2, n3),
-		graph.NewRoute(n3, n4),
-		graph.NewRoute(n1, n5),
-		graph.NewRoute(n3, n6),
-		graph.NewRoute(n4, n7),
-		graph.NewRoute(n5, n6),
-		graph.NewRoute(n6, n7),
-		graph.NewRoute(n5, n8),
-		graph.NewRoute(n6, n9),
-		graph.NewRoute(n8, n9),
-	}
-	egGraph, err := graph.GenerateGraphWithNodesAndRoutes(nodes, routes)
+	egGraph, err := graph.GenerateGraphWithRoutes(input)
 	if err != nil {
 		panic(err)
 	}

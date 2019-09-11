@@ -3,6 +3,8 @@ package graph
 import (
 	"errors"
 	"fmt"
+	"strconv"
+	"strings"
 )
 
 // 一个被处理的网络被视为一个可连结的图
@@ -14,6 +16,51 @@ type Graph struct {
 	matrix [][]int
 	// 原始管道
 	oriRoutes []*Route
+}
+
+// 根据连接关系，生成一张图，简化图的初始化输入
+// 每一条route的写法为用逗号分隔的字符串，比如 "0,1" 代表连接 节点 0，1 的一条路径
+func GenerateGraphWithRoutes(rs []string) (g *Graph, err error) {
+	var (
+		nodeMap   = make(map[int]*Node)
+		nodeList  = []*Node{}
+		routeList = []*Route{}
+	)
+	for _, r := range rs {
+		var (
+			na, nb       int64
+			kna, knb     int
+			ns           = strings.Split(r, ",")
+			nodea, nodeb *Node
+			ok           bool
+		)
+		if len(ns) != 2 {
+			err = errors.New(fmt.Sprintf("Invalid input route with %s", r))
+			return
+		}
+		if na, err = strconv.ParseInt(ns[0], 10, 64); err != nil {
+			return
+		}
+		kna = int(na)
+		if nb, err = strconv.ParseInt(ns[1], 10, 64); err != nil {
+			return
+		}
+		knb = int(nb)
+		if nodea, ok = nodeMap[kna]; !ok {
+			nodea = &Node{Num: kna}
+			nodeMap[kna] = nodea
+		}
+		if nodeb, ok = nodeMap[knb]; !ok {
+			nodeb = &Node{Num: knb}
+			nodeMap[knb] = nodeb
+		}
+		routeList = append(routeList, NewRoute(nodea, nodeb))
+	}
+	// 去重后获取节点列表
+	for _, n := range nodeMap {
+		nodeList = append(nodeList, n)
+	}
+	return GenerateGraphWithNodesAndRoutes(nodeList, routeList)
 }
 
 // 根据结点列表和连接关系列表，生成一张图
