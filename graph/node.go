@@ -4,21 +4,12 @@ package graph
 // 每一个节点包括：
 //
 type Node struct {
-	Num    int `json:"num"`
-	routes [4]*Route
+	Num int `json:"num"`
 }
 
 func NewNode(num int) *Node {
 	n := &Node{
-		Num:    num,
-		routes: [4]*Route{},
+		Num: num,
 	}
 	return n
-}
-
-func validateNode(node *Node) bool {
-	if len(node.routes) != 4 {
-		return false
-	}
-	return true
 }

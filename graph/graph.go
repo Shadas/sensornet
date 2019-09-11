@@ -14,10 +14,6 @@ type Graph struct {
 	matrix [][]int
 	// 原始管道
 	oriRoutes []*Route
-	// 从某个node开始引出的结点
-	leadNode *Node
-	// validate用的map
-	validMap map[*Node]struct{}
 }
 
 // 根据结点列表和连接关系列表，生成一张图
@@ -55,13 +51,6 @@ func GenerateGraphWithNodesAndRoutes(nodes []*Node, routes []*Route) (g *Graph, 
 	return
 }
 
-func GenerateGraph(root *Node) *Graph {
-	g := &Graph{
-		leadNode: root,
-	}
-	return g
-}
-
 // 打印该图的邻接矩阵
 func (g *Graph) ShowMatrix() {
 	for _, line := range g.matrix {
@@ -82,45 +71,4 @@ func (g *Graph) Nodes() []*Node {
 // 获取该图的原版管道信息
 func (g *Graph) OriRoute() []*Route {
 	return g.oriRoutes
-}
-
-// 通过起始结点验证一个node为起始结点的graph是否为合法的网络
-func (g *Graph) validateGraphWithLeadNode() (b bool) {
-	g.validMap = make(map[*Node]struct{})
-	if g.leadNode == nil {
-		fmt.Println("leadNode is nil")
-		return false
-	}
-	return g.validateGraphCursion(g.leadNode)
-}
-
-func (g *Graph) validateGraphCursion(node *Node) (b bool) {
-	if node == nil {
-		fmt.Println("cursion node is nil")
-		return false
-	}
-	g.validMap[node] = struct{}{}
-	if !validateNode(node) {
-		fmt.Println("not valid node")
-		return false
-	}
-	for _, route := range node.routes {
-		if route == nil {
-			continue
-		}
-		if !route.validate(node) {
-			fmt.Println("not valid route")
-			return false
-		}
-		// 因为这里之前校验过route的端点，所以这里不用对另一个端点判断是否为nil
-		on := route.theOtherNode(node)
-		if _, ok := g.validMap[on]; ok {
-			continue
-		}
-		b = g.validateGraphCursion(on)
-		if !b {
-			return b
-		}
-	}
-	return true
 }
