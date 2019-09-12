@@ -56,11 +56,41 @@ func GenerateGraphWithRoutes(rs []string) (g *Graph, err error) {
 		}
 		routeList = append(routeList, NewRoute(nodea, nodeb))
 	}
-	// 去重后获取节点列表
-	for _, n := range nodeMap {
-		nodeList = append(nodeList, n)
+	// 去重后获取节点列表,需要保证顺序，节点编号与下标一致
+	for i := 0; i < len(nodeMap); i++ {
+		node, ok := nodeMap[i]
+		if !ok {
+			panic(fmt.Sprintf("err node num with %d", i))
+		}
+		nodeList = append(nodeList, node)
 	}
+	// 检查生成的所有点
+	checkGenNodeListByNodePairStr(nodeList)
+	// 检查生成的所有管道
+	// checkGenRouteListByNodePairStr(routeList)
 	return GenerateGraphWithNodesAndRoutes(nodeList, routeList)
+}
+
+// 检查输入的node结对分析后的nodeList结果
+func checkGenNodeListByNodePairStr(nl []*Node) (err error) {
+	fmt.Println("检查所有输入的点:")
+	count := len(nl)
+	nums := []int{}
+	for _, n := range nl {
+		nums = append(nums, n.Num)
+	}
+CheckIdx:
+	for i := 0; i < count; i++ {
+		for _, n := range nums {
+			if n == i {
+				continue CheckIdx
+			}
+		}
+		err = errors.New(fmt.Sprintf("err node with %d", i))
+		return
+	}
+	fmt.Printf("检查所有输入点succ，共有 %d 个点 \n", count)
+	return
 }
 
 // 根据结点列表和连接关系列表，生成一张图
@@ -95,13 +125,27 @@ func GenerateGraphWithNodesAndRoutes(nodes []*Node, routes []*Route) (g *Graph, 
 		NodeCount: len(nodes),
 		oriRoutes: routes,
 	}
+	// g.ShowMatrix()
 	return
 }
 
 // 打印该图的邻接矩阵
 func (g *Graph) ShowMatrix() {
-	for _, line := range g.matrix {
-		fmt.Println(line)
+	firstLine := []int{0}
+	for i := 0; i < g.NodeCount; i++ {
+		firstLine = append(firstLine, i)
+	}
+	firstStr := ""
+	for _, i := range firstLine {
+		firstStr += fmt.Sprintf("%.2d ", i)
+	}
+	fmt.Println(firstStr)
+	for i, line := range g.matrix {
+		tmpStr := ""
+		for _, num := range append([]int{i}, line...) {
+			tmpStr += fmt.Sprintf("%.2d ", num)
+		}
+		fmt.Println(tmpStr)
 	}
 }
 
