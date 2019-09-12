@@ -94,14 +94,28 @@ CheckIdx:
 }
 
 // 根据结点列表和连接关系列表，生成一张图
-func GenerateGraphWithNodesAndRoutes(nodes []*Node, routes []*Route) (g *Graph, err error) {
-	if len(nodes) == 0 {
+func GenerateGraphWithNodesAndRoutes(nodesOri []*Node, routes []*Route) (g *Graph, err error) {
+	if len(nodesOri) == 0 {
 		err = errors.New("nodes can't be empty.")
 		return
 	}
 	var (
-		matrix [][]int
+		matrix    [][]int
+		nodeCount = len(nodesOri)
+		nodes     []*Node
 	)
+	// 保证节点编号和下标一致有序
+NodeCountLoop:
+	for i := 0; i < nodeCount; i++ {
+		for _, n := range nodesOri {
+			if n.Num == i {
+				nodes = append(nodes, n)
+				continue NodeCountLoop
+			}
+		}
+		panic(fmt.Sprintf("not found node num with %d", i))
+	}
+
 	// 初始化邻接矩阵
 	for i := 0; i < len(nodes); i++ {
 		line := []int{}
